@@ -1,5 +1,5 @@
-<?php 
-    if ($block->showCustomizeButton()): 
+<?php
+    if ($block->showCustomizeButton()):
         $helpCustomizeButtonText = $block->getCustomizeButtonHelpText();
 ?>
     <div class="product-designer-button-container">
@@ -25,7 +25,7 @@
             'desgnerModule'
 
         ], function ($, ui, modal, _, _designer) {
-            
+
         $(function () {
 
             var formCartSelector = '#product_addtocart_form';
@@ -39,7 +39,7 @@
             var parentProductId = '<?php echo $block->getProduct()->getId(); ?>';
             var defaultConfiguration = <?php echo $block->getDesignerConfiguration($block->getProduct()); ?>;
             var defaultLayerPrices = <?php echo $block->getLayerPrices(); ?>;
-            
+
             var customPriceTrans = '<?php echo __('Design Price') ?>';
 
             var configuredPrices = {};
@@ -54,9 +54,9 @@
                 var _customize = $('body').dd_help({
                     'data': helpCustomizeButton
                 });
-                
+
                 _customize.show();
-                
+
             <?php endif; ?>
 
             var options = {
@@ -113,7 +113,7 @@
 
                 return conf;
             }
-            
+
             function clearAll(media_id) {
                 configuredMediaProducts[media_id] = [];
             }
@@ -249,7 +249,7 @@
                             ' +' + currency + '' + totalPrice.toFixed(2) + ' '
                                  + '(' + customPriceTrans + ')'
                             );
-                    
+
                     $('' + priceAddonSelectorAfter).after(spanPrice);
                 }
             }
@@ -318,11 +318,11 @@
             }
 
             function initDesigner(img, skipOpen) {
-            
+
                 <?php if($block->getShareDesign()): ?>
                      img.conf = <?php echo $block->getShareDesign() ?>
-                <?php endif; ?>        
-            
+                <?php endif; ?>
+
                 img.conf = configuredMediaProducts[img.media_id] ? configuredMediaProducts[img.media_id]
                         : img.conf;
 
@@ -373,9 +373,9 @@
                 designer.onClearAll(clearAll);
 
                 designer.onClose(function () {
-                    callClose();                    
+                    callClose();
                 });
-                
+
                 function callClose() {
                     designer.destroy();
                     $('#dd-designer-container').modal('closeModal');
@@ -437,19 +437,22 @@
                                 selected_options[attribute_id] = $(v).attr('option-selected');
                             }
                         });
-
-                        var product_id_index = $('[data-role=swatch-options]').data('mageSwatchRenderer').options.jsonConfig.index;
-                        var found_ids = [];
-                        $.each(product_id_index, function (product_id, attributes) {
-                            var productIsSelected = function (attributes, selected_options) {
-                                return _.isEqual(attributes, selected_options);
-                            }
-                            if (productIsSelected(attributes, selected_options)) {
-                                found_ids.push(product_id);
-                            }
-                        });
-                        parentProductId = found_ids[0];
-
+                        if($('[data-role=swatch-options]').data('mageSwatchRenderer')) {
+                          var product_id_index = $('[data-role=swatch-options]').data('mageSwatchRenderer').options.jsonConfig.index;
+                          var found_ids = [];
+                          $.each(product_id_index, function (product_id, attributes) {
+                              var productIsSelected = function (attributes, selected_options) {
+                                  return _.isEqual(attributes, selected_options);
+                              }
+                              if (productIsSelected(attributes, selected_options)) {
+                                  found_ids.push(product_id);
+                              }
+                          });
+                          parentProductId = found_ids[0];
+                        }
+                        if($('[name="selected_configurable_option"]').val()){
+                          parentProductId = $('[name="selected_configurable_option"]').val();
+                        }
 
     <?php endif; ?>
 
@@ -465,12 +468,12 @@
                 }
                 return;
             });
-            
+
         });
 
     });
     <?php if($block->getIsImportFromFbEnabled()): ?>
-        
+
         window.fbAsyncInit = function() {
           FB.init({
             appId: '<?php echo $block->getFbAppId(); ?>',
@@ -486,7 +489,7 @@
           js.src = "https://connect.facebook.net/en_US/sdk.js";
           fjs.parentNode.insertBefore(js, fjs);
         }(document, 'script', 'facebook-jssdk'));
-        
+
     <?php endif; ?>
 
     </script>
